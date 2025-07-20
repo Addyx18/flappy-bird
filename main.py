@@ -1,47 +1,259 @@
+from itertools import chain
 import pygame
 import sys
 import random
 from pygame.locals import *
-from utils import random_bar
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BG_IMAGE, BAR_IMAGE
+from utils import is_collided, save_to_file, load_scores_from_file, get_high_score, exit_game
+from pipe import Pipe, PipeList
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BG_IMAGE, GROUND_IMAGE, GAME_OVER_BACKGROUND
 from button import Button
+from bird import Bird
+from enum import Enum
 
+# Initialize Pygame
 pygame.init()
+
+# Set up the game window
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+# Set the window title
 pygame.display.set_caption("Flappy Bird Game")
-font = pygame.font.Font(None, 20)
+
+# Loading Font
+font = pygame.font.Font(None, 50)
+
+# Clock object for measuring time
 clock = pygame.time.Clock()
 
-def on_button_press():
-    print("Button pressed")
 
-random_color = COLORS[1]
-button = Button(10, 20, 150, 50, "Hello, world", on_button_press)
+class GameState(Enum):
+    MENU      = 1
+    PLAY      = 2
+    PAUSE     = 3
+    GAME_OVER = 4
 
-bg_x = 0
+
+GAME_STATE = GameState.MENU
+score_button_idx    = 0
+play_button_idx     = 0
+exit_button_idx     = 0
+
+normal_pipes = PipeList()
+inverted_pipes = PipeList()
+
+pipe_time = 0
+pipe_interval = 1500
+
+bird = Bird() # Better if the bird had the sprites
+
+score = 0
+loaded = False
+
+def game_over():
+    global loaded
+    alpha = 0
+    cloock = pygame.time.Clock()
+
+    while alpha <= 255 :
+
+        screen.fill(COLORS['white'])
+        game_over_image = GAME_OVER_BACKGROUND.convert_alpha().copy()
+        game_over_image.set_alpha(alpha)
+        screen.blit(game_over_image, (WINDOW_WIDTH // 2 - game_over_image.get_width() // 2, WINDOW_HEIGHT // 2 - game_over_image.get_height() // 2))
+        alpha += 5
+        pygame.display.flip()
+        cloock.tick(60)
+
+
+def draw_menu():
+    # Draw the menu background
+    # Draw the button sprites
+    global play_button_idx, score_button_idx, exit_button_idx, GAME_STATE 
+    screen.blit(BG_IMAGE, (0, 0))
+    
+    BUTTON_WIDTH = 300
+    BUTTON_HEIGHT = 100
+
+    play_sprite_sheet = pygame.image.load('./assets/play_sprite.png').convert_alpha()
+    score_sprite_sheet = pygame.image.load('./assets/high_score_sprite.png').convert_alpha()
+    exit_sprite_sheet = pygame.image.load('./assets/exit_sprite.png').convert_alpha()
+
+
+    play_button_state = []
+    for i in range(3):
+        x = i * BUTTON_WIDTH
+        sub_image = play_sprite_sheet.subsurface(pygame.Rect(x, 0, BUTTON_WIDTH, BUTTON_HEIGHT)).copy()
+        play_button_state.append(sub_image)
+
+
+
+    score_button_state = []
+    for i in range(3):
+        x = i * BUTTON_WIDTH
+        sub_image = score_sprite_sheet.subsurface(pygame.Rect(x, 0, BUTTON_WIDTH, BUTTON_HEIGHT)).copy()
+        score_button_state.append(sub_image)
+    
+
+    exit_button_state = []
+    for i in range(3):
+        x = i * BUTTON_WIDTH
+        sub_image = exit_sprite_sheet.subsurface(pygame.Rect(x, 0, BUTTON_WIDTH, BUTTON_HEIGHT)).copy()
+        exit_button_state.append(sub_image)
+
+    
+
+    # Button rect
+    play_button_pos = (300, 250)
+    play_button_rect = pygame.Rect(play_button_pos, (BUTTON_WIDTH, BUTTON_HEIGHT))
+
+
+    # Button rect
+    score_button_pos = (300, 360)
+    score_button_rect = pygame.Rect(score_button_pos, (BUTTON_WIDTH, BUTTON_HEIGHT))
+
+
+    # Button rect
+    exit_button_pos = (300, 470)
+    exit_button_rect = pygame.Rect(exit_button_pos, (BUTTON_WIDTH, BUTTON_HEIGHT))
+
+
+    # Draw the buttons
+    screen.blit(play_button_state[play_button_idx], play_button_pos)
+    screen.blit(score_button_state[score_button_idx], score_button_pos)
+    screen.blit(exit_button_state[exit_button_idx], exit_button_pos)
+    for event in pygame.event.get():
+
+
+      ##################################################################################################################
+
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
+      ##################################################################################################################
+
+        elif event.type == pygame.MOUSEMOTION:
+            pos = pygame.mouse.get_pos()
+
+            if play_button_rect.collidepoint(pos):
+                play_button_idx = 1
+
+            elif score_button_rect.collidepoint(pos):
+                score_button_idx = 1
+
+            elif exit_button_rect.collidepoint(pos):
+                exit_button_idx = 1
+            else:
+                play_button_idx = 0
+                score_button_idx = 0
+                exit_button_idx = 0
+
+      ##################################################################################################################
+
+        elif event.type == MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+
+            if play_button_rect.collidepoint(pos):
+                play_button_idx = 2
+                GAME_STATE = GameState.PLAY
+                print("yes")
+
+            elif score_button_rect.collidepoint(pos):
+                score_button_idx = 2
+
+            elif exit_button_rect.collidepoint(pos):
+                exit_button_idx = 2
+
+
+def play_game():
+    global GAME_STATE, pipe_time, pipe_interval
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
+        elif event.type == KEYDOWN and event.key == K_SPACE:
+            bird.update_and_draw(screen, True)
+
+    current_time = pygame.time.get_ticks()
+
+    if current_time - pipe_time > pipe_interval:
+        pipe_time = current_time
+
+        # Add new pipes
+        inverted_pipes.add_pipe(Pipe(True))
+        normal_pipes.add_pipe(Pipe(False))
+
+
+
+    screen.blit(BG_IMAGE, (0, 0))
+
+    # Display pipes
+    normal_pipes.update_and_draw(screen)
+    inverted_pipes.update_and_draw(screen)
+
+    is_crashed, score = is_collided(bird, normal_pipes, inverted_pipes)
+
+    if is_crashed:
+        GAME_STATE = GameState.GAME_OVER
+        print("carshed")
+        # write score to a file
+        save_to_file(score)
+        print(score)
+
+
+    # Display Base
+    screen.blit(GROUND_IMAGE, (0, WINDOW_HEIGHT - GROUND_IMAGE.get_rect().height))
+    bird.update_and_draw(screen)
+
+    # Cleaning up the pipes
+    inverted_pipes.remove_off_screen_pipes()
+    normal_pipes.remove_off_screen_pipes()
+
+    pygame.display.flip()
+    clock.tick(60)
+
+
+
 
 # Game loop
 running = True
 while running:
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            running = False
-        elif event.type == MOUSEBUTTONDOWN and event.button == 1:
-            random_color = random.choice(COLORS)
-            if button.is_hovered(pygame.mouse.get_pos()):
-                button.on_click()
+    
+    match GAME_STATE:
+        case GameState.MENU:
+            draw_menu()
 
-    bg_x -= 1
-    if bg_x <= -WINDOW_WIDTH:
-        bg_x = 0
-
-    screen.blit(BG_IMAGE, (bg_x, 0))
-    screen.blit(BG_IMAGE, (bg_x + WINDOW_WIDTH, 0))
-
-    button.process(screen)
-
+        case GameState.PLAY:
+            play_game()
+            
+        case GameState.GAME_OVER:
+            if not loaded:
+                loaded = True
+                game_over()
+            else:
+                screen.fill(COLORS['white'])
+                game_over_image = GAME_OVER_BACKGROUND.convert_alpha()
+                screen.blit(game_over_image, (WINDOW_WIDTH // 2 - game_over_image.get_width() // 2, WINDOW_HEIGHT // 2 - game_over_image.get_height() // 2))
+                high_score = get_high_score()
+                user_score_text = font.render(f'{score}', True, COLORS['black'])
+                high_score_text = font.render(f'{high_score}', True, COLORS['black'])
+                screen.blit(user_score_text, (WINDOW_WIDTH // 2 + 80, WINDOW_HEIGHT // 2 + game_over_image.get_height() // 2 - 275))
+                screen.blit(high_score_text, (WINDOW_WIDTH // 2 + 80, WINDOW_HEIGHT // 2 + game_over_image.get_height() // 2 - 180))
+                
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            GAME_STATE = GameState.MENU
+                            loaded = False
+                normal_pipes.pipes.clear()
+                inverted_pipes.pipes.clear()
     pygame.display.flip()
-    clock.tick(60)
+
 
 pygame.quit()
 sys.exit()
