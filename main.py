@@ -8,6 +8,7 @@ from enum import Enum
 
 pygame.init()
 pygame.mixer.init()
+
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Flappy Bird Game")
 font = pygame.font.Font(None, 50)
@@ -21,6 +22,7 @@ class GameState(Enum):
 
 
 GAME_STATE = GameState.MENU
+
 score_button_idx    = 0
 play_button_idx     = 0
 exit_button_idx     = 0
@@ -148,6 +150,8 @@ def draw_menu():
 
             elif exit_button_rect.collidepoint(pos):
                 exit_button_idx = 2
+                pygame.quit()
+                sys.exit()
 
 
 def play_game():
