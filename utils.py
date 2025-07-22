@@ -1,7 +1,12 @@
 import pygame
 import random
 from itertools import zip_longest
+pygame.mixer.init()
+wing_sound = pygame.mixer.Sound('./assets/audio/wing.wav')
+point_sound = pygame.mixer.Sound('./assets/audio/point.wav')
+hint_sound = pygame.mixer.Sound('./assets/audio/hit.wav')
 
+channel1 = pygame.mixer.Channel(1)
 
 def exit_game():
     pygame.quit()
@@ -24,10 +29,12 @@ def is_collided(bird, normal_pipes, inverted_pipes):
             offset1 = (bird_rect.left - rect1.left, bird_rect.top - rect1.top)
             offset2 = (bird_rect.left - rect2.left, bird_rect.top - rect2.top)
             if mask1.overlap(bird_mask, offset1) or mask2.overlap(bird_mask, offset2):
+                channel1.play(pygame.mixer.Sound('./assets/audio/hit.wav'), maxtime=1000)
                 return True, score
 
             if bird.x > pipe1.x + pipe1.width and not pipe1.scored:
                 score += 1
+                channel1.play(point_sound, maxtime=1000)
                 pipe1.scored = True
                 pipe2.scored = True
     return False, score

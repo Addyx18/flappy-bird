@@ -7,11 +7,11 @@ from bird import Bird
 from enum import Enum
 
 pygame.init()
+pygame.mixer.init()
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Flappy Bird Game")
 font = pygame.font.Font(None, 50)
 clock = pygame.time.Clock()
-
 
 class GameState(Enum):
     MENU      = 1
@@ -190,7 +190,6 @@ def play_game():
         save_to_file(user_score)
     else:
         user_score += score
-        print(user_score)
 
 
     # Display Base

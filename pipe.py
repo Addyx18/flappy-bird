@@ -4,7 +4,7 @@ from constants import BAR_IMAGE, WINDOW_WIDTH, WINDOW_HEIGHT
 
 class Pipe():
     def __init__(self, upside_down=True):
-        self.height = random.randint(200, 250)                                                                # Height of the pipe
+        self.height = random.randint(240, 280)                                                                # Height of the pipe
         self.speed = 2
         self.x = WINDOW_WIDTH + random.randint(100, 101)                                                      # Horizontal position of the pipe
         self.scored = False
