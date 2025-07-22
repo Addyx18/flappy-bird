@@ -43,7 +43,7 @@ def game_over():
 
     while alpha <= 255 :
 
-        screen.fill(COLORS['white'])
+        screen.blit(BG_IMAGE, (0, 0))
         game_over_image = GAME_OVER_BACKGROUND.convert_alpha().copy()
         game_over_image.set_alpha(alpha)
         screen.blit(game_over_image, (WINDOW_WIDTH // 2 - game_over_image.get_width() // 2, WINDOW_HEIGHT // 2 - game_over_image.get_height() // 2))
@@ -53,8 +53,6 @@ def game_over():
 
 
 def draw_menu():
-    # Draw the menu background
-    # Draw the button sprites
     global play_button_idx, score_button_idx, exit_button_idx, GAME_STATE
     screen.blit(BG_IMAGE, (0, 0))
 
@@ -153,6 +151,7 @@ def draw_menu():
 
 
 def play_game():
+    global wing_sound
     global GAME_STATE, pipe_time, pipe_interval, user_score
 
     for event in pygame.event.get():
@@ -222,7 +221,7 @@ while running:
                 loaded = True
                 game_over()
             else:
-                screen.fill(COLORS['white'])
+                screen.blit(BG_IMAGE, (0, 0))
                 game_over_image = GAME_OVER_BACKGROUND.convert_alpha()
                 screen.blit(game_over_image, (WINDOW_WIDTH // 2 - game_over_image.get_width() // 2, WINDOW_HEIGHT // 2 - game_over_image.get_height() // 2))
                 high_score = get_high_score()
