@@ -1,28 +1,15 @@
-from itertools import chain
-import pygame
 import sys
-import random
-from pygame.locals import *
-from utils import is_collided, save_to_file, load_scores_from_file, get_high_score, exit_game
+import pygame
+from utils import is_collided, save_to_file, get_high_score
 from pipe import Pipe, PipeList
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BG_IMAGE, GROUND_IMAGE, GAME_OVER_BACKGROUND
-from button import Button
 from bird import Bird
 from enum import Enum
 
-# Initialize Pygame
 pygame.init()
-
-# Set up the game window
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-
-# Set the window title
 pygame.display.set_caption("Flappy Bird Game")
-
-# Loading Font
 font = pygame.font.Font(None, 50)
-
-# Clock object for measuring time
 clock = pygame.time.Clock()
 
 
@@ -46,7 +33,7 @@ pipe_interval = 1500
 
 bird = Bird() # Better if the bird had the sprites
 
-score = 0
+user_score = 0
 loaded = False
 
 def game_over():
@@ -68,9 +55,9 @@ def game_over():
 def draw_menu():
     # Draw the menu background
     # Draw the button sprites
-    global play_button_idx, score_button_idx, exit_button_idx, GAME_STATE 
+    global play_button_idx, score_button_idx, exit_button_idx, GAME_STATE
     screen.blit(BG_IMAGE, (0, 0))
-    
+
     BUTTON_WIDTH = 300
     BUTTON_HEIGHT = 100
 
@@ -92,7 +79,7 @@ def draw_menu():
         x = i * BUTTON_WIDTH
         sub_image = score_sprite_sheet.subsurface(pygame.Rect(x, 0, BUTTON_WIDTH, BUTTON_HEIGHT)).copy()
         score_button_state.append(sub_image)
-    
+
 
     exit_button_state = []
     for i in range(3):
@@ -100,7 +87,7 @@ def draw_menu():
         sub_image = exit_sprite_sheet.subsurface(pygame.Rect(x, 0, BUTTON_WIDTH, BUTTON_HEIGHT)).copy()
         exit_button_state.append(sub_image)
 
-    
+
 
     # Button rect
     play_button_pos = (300, 250)
@@ -126,7 +113,7 @@ def draw_menu():
 
       ##################################################################################################################
 
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
@@ -150,7 +137,7 @@ def draw_menu():
 
       ##################################################################################################################
 
-        elif event.type == MOUSEBUTTONDOWN:
+        elif event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
 
             if play_button_rect.collidepoint(pos):
@@ -166,14 +153,14 @@ def draw_menu():
 
 
 def play_game():
-    global GAME_STATE, pipe_time, pipe_interval
+    global GAME_STATE, pipe_time, pipe_interval, user_score
 
     for event in pygame.event.get():
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-        elif event.type == KEYDOWN and event.key == K_SPACE:
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             bird.update_and_draw(screen, True)
 
     current_time = pygame.time.get_ticks()
@@ -195,12 +182,15 @@ def play_game():
 
     is_crashed, score = is_collided(bird, normal_pipes, inverted_pipes)
 
+    print(user_score)
     if is_crashed:
         GAME_STATE = GameState.GAME_OVER
         print("carshed")
         # write score to a file
-        save_to_file(score)
-        print(score)
+        save_to_file(user_score)
+    else:
+        user_score += score
+        print(user_score)
 
 
     # Display Base
@@ -220,14 +210,14 @@ def play_game():
 # Game loop
 running = True
 while running:
-    
+
     match GAME_STATE:
         case GameState.MENU:
             draw_menu()
 
         case GameState.PLAY:
             play_game()
-            
+
         case GameState.GAME_OVER:
             if not loaded:
                 loaded = True
@@ -237,11 +227,13 @@ while running:
                 game_over_image = GAME_OVER_BACKGROUND.convert_alpha()
                 screen.blit(game_over_image, (WINDOW_WIDTH // 2 - game_over_image.get_width() // 2, WINDOW_HEIGHT // 2 - game_over_image.get_height() // 2))
                 high_score = get_high_score()
-                user_score_text = font.render(f'{score}', True, COLORS['black'])
+
+                user_score_text = font.render(f'{user_score}', True, COLORS['black'])
                 high_score_text = font.render(f'{high_score}', True, COLORS['black'])
+
                 screen.blit(user_score_text, (WINDOW_WIDTH // 2 + 80, WINDOW_HEIGHT // 2 + game_over_image.get_height() // 2 - 275))
                 screen.blit(high_score_text, (WINDOW_WIDTH // 2 + 80, WINDOW_HEIGHT // 2 + game_over_image.get_height() // 2 - 180))
-                
+
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
@@ -257,4 +249,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-

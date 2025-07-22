@@ -12,7 +12,7 @@ def is_collided(bird, normal_pipes, inverted_pipes):
     score = 0
     bird_mask = pygame.mask.from_surface(bird.bird)
     bird_rect = bird.bird.get_rect(topleft=(bird.x, bird.y))
-    
+
     for pipe1, pipe2 in zip_longest(normal_pipes, inverted_pipes):
         if pipe1 and pipe2:
             mask1 = pygame.mask.from_surface(pipe1.pipe)
@@ -26,8 +26,10 @@ def is_collided(bird, normal_pipes, inverted_pipes):
             if mask1.overlap(bird_mask, offset1) or mask2.overlap(bird_mask, offset2):
                 return True, score
 
-            if bird.x > pipe1.x + pipe1.width and bird.x > pipe2.x + pipe2.width:
-                score+=1
+            if bird.x > pipe1.x + pipe1.width and not pipe1.scored:
+                score += 1
+                pipe1.scored = True
+                pipe2.scored = True
     return False, score
 
 # Functions for managing scores

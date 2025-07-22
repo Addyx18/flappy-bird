@@ -7,6 +7,7 @@ class Pipe():
         self.height = random.randint(200, 250)                                                                # Height of the pipe
         self.speed = 2
         self.x = WINDOW_WIDTH + random.randint(100, 101)                                                      # Horizontal position of the pipe
+        self.scored = False
         self.y = -5  if upside_down else WINDOW_HEIGHT - self.height                                          # Vertical position of the pipe
         self.image = BAR_IMAGE.convert_alpha()
         self.width = BAR_IMAGE.get_rect().width
@@ -15,8 +16,8 @@ class Pipe():
     def update_and_draw(self, screen):
         self.x -= self.speed
         screen.blit(self.pipe, (self.x, self.y))
-    
-    def off_screen(self): 
+
+    def off_screen(self):
         return self.x + self.width < 0
 
 
@@ -36,4 +37,3 @@ class PipeList():
 
     def __iter__(self):
         return iter(self.pipes)
-
