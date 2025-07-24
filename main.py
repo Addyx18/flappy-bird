@@ -55,7 +55,8 @@ def game_over():
 
 
 def draw_menu():
-    global play_button_idx, score_button_idx, exit_button_idx, GAME_STATE
+    global play_button_idx, score_button_idx, exit_button_idx, GAME_STATE, user_score
+    user_score = 0
     screen.blit(BG_IMAGE, (0, 0))
 
     BUTTON_WIDTH = 300
