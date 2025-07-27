@@ -191,6 +191,10 @@ def play_game():
     screen.blit(GROUND_IMAGE, (0, WINDOW_HEIGHT - GROUND_IMAGE.get_rect().height))
     bird.update_and_draw(screen)
 
+    # Display Score
+    score_text = font.render(f'Score: {user_score}', True, COLORS['black'])
+    screen.blit(score_text, (10, 10))
+
 
     # Cleaning up the pipes
     inverted_pipes.remove_off_screen_pipes()
