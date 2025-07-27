@@ -136,6 +136,7 @@ def draw_menu():
 
             if play_button_rect.collidepoint(pos):
                 play_button_idx = 2
+                bird.reset()
                 config.GAME_STATE = GameState.PLAY
                 print("yes")
 
@@ -149,7 +150,7 @@ def draw_menu():
 
 
 def play_game():
-    global GAME_STATE, pipe_time, pipe_interval, user_score
+    global pipe_time, pipe_interval, user_score
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -189,6 +190,7 @@ def play_game():
     # Display Base
     screen.blit(GROUND_IMAGE, (0, WINDOW_HEIGHT - GROUND_IMAGE.get_rect().height))
     bird.update_and_draw(screen)
+
 
     # Cleaning up the pipes
     inverted_pipes.remove_off_screen_pipes()
