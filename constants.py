@@ -11,8 +11,13 @@ GROUND_IMAGE = pygame.transform.scale(GROUND_IMAGE, (WINDOW_WIDTH, GROUND_IMAGE.
 BAR_IMAGE = pygame.image.load('./assets/pipe.png')
 BIRD_IMAGE = pygame.image.load('./assets/bird.png')
 
+TITLE_IMAGE = pygame.image.load('./assets/message.png')
+
 
 MENU_BACKGROUND = pygame.transform.scale((pygame.image.load('./assets/bg-menu.jpg')), (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 GAME_OVER_BACKGROUND = pygame.image.load('./assets/game_over.png')
 
+
+BUTTON_WIDTH = 300
+BUTTON_HEIGHT = 100

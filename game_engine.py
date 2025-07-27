@@ -1,4 +1,4 @@
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BG_IMAGE, GROUND_IMAGE, GAME_OVER_BACKGROUND
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BG_IMAGE, GROUND_IMAGE, GAME_OVER_BACKGROUND, BUTTON_HEIGHT, BUTTON_WIDTH, TITLE_IMAGE
 from pipe import Pipe, PipeList
 import config
 from config import GameState
@@ -58,8 +58,8 @@ def draw_menu():
     user_score = 0
     screen.blit(BG_IMAGE, (0, 0))
 
-    BUTTON_WIDTH = 300
-    BUTTON_HEIGHT = 100
+    screen.blit(TITLE_IMAGE, (WINDOW_WIDTH // 2 - TITLE_IMAGE.get_width() // 2, 50))
+
 
     play_sprite_sheet = pygame.image.load('./assets/play_sprite.png').convert_alpha()
     score_sprite_sheet = pygame.image.load('./assets/high_score_sprite.png').convert_alpha()
@@ -90,17 +90,17 @@ def draw_menu():
 
 
     # Button rect
-    play_button_pos = (300, 250)
+    play_button_pos = (480, 280)
     play_button_rect = pygame.Rect(play_button_pos, (BUTTON_WIDTH, BUTTON_HEIGHT))
 
 
     # Button rect
-    score_button_pos = (300, 360)
+    score_button_pos = (480, 390)
     score_button_rect = pygame.Rect(score_button_pos, (BUTTON_WIDTH, BUTTON_HEIGHT))
 
 
     # Button rect
-    exit_button_pos = (300, 470)
+    exit_button_pos = (480, 500)
     exit_button_rect = pygame.Rect(exit_button_pos, (BUTTON_WIDTH, BUTTON_HEIGHT))
 
 
