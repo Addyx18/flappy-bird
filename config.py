@@ -1,4 +1,6 @@
 from enum import Enum
+import os
+import sys
 
 class GameState(Enum):
     MENU      = 1
@@ -9,3 +11,15 @@ class GameState(Enum):
 GAME_STATE = GameState.MENU
 
 loaded = False
+
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and PyInstaller """
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+

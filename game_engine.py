@@ -1,7 +1,7 @@
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BG_IMAGE, GROUND_IMAGE, GAME_OVER_BACKGROUND, BUTTON_HEIGHT, BUTTON_WIDTH, TITLE_IMAGE
 from pipe import Pipe, PipeList
 import config
-from config import GameState
+from config import GameState, resource_path
 from utils import is_collided, save_to_file, get_high_score
 from bird import Bird
 import pygame
@@ -61,9 +61,9 @@ def draw_menu():
     screen.blit(TITLE_IMAGE, (WINDOW_WIDTH // 2 - TITLE_IMAGE.get_width() // 2, 50))
 
 
-    play_sprite_sheet = pygame.image.load('./assets/play_sprite.png').convert_alpha()
-    score_sprite_sheet = pygame.image.load('./assets/high_score_sprite.png').convert_alpha()
-    exit_sprite_sheet = pygame.image.load('./assets/exit_sprite.png').convert_alpha()
+    play_sprite_sheet = pygame.image.load(resource_path('./assets/play_sprite.png')).convert_alpha()
+    score_sprite_sheet = pygame.image.load(resource_path('./assets/high_score_sprite.png')).convert_alpha()
+    exit_sprite_sheet = pygame.image.load(resource_path('./assets/exit_sprite.png')).convert_alpha()
 
 
     play_button_state = []
