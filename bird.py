@@ -41,5 +41,9 @@ class Bird:
             self.hit_sound.play()
             config.GAME_STATE = GameState.GAME_OVER
             return
+        elif (self.y < 0):
+            self.hit_sound.play()
+            config.GAME_STATE = GameState.GAME_OVER
+            return
 
         screen.blit(self.bird, (self.x, self.y))
