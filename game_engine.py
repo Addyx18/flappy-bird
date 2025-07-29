@@ -1,7 +1,8 @@
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BG_IMAGE, GROUND_IMAGE, GAME_OVER_BACKGROUND, BUTTON_HEIGHT, BUTTON_WIDTH, TITLE_IMAGE
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, COLORS, BUTTON_HEIGHT, BUTTON_WIDTH, GAME_TITLE, FONT_SIZE, PIPE_INTERVAL
+from game_assets import SCORE_SPRITE_IMAGE, PLAY_SPRITE_IMAGE, EXIT_SPRITE_IMAGE, BG_IMAGE, GROUND_IMAGE, GAME_OVER_BACKGROUND, TITLE_IMAGE
 from pipe import Pipe, PipeList
 import config
-from config import GameState, resource_path
+from config import GameState
 from utils import is_collided, save_to_file, get_high_score
 from bird import Bird
 import pygame
@@ -11,8 +12,8 @@ clock = pygame.time.Clock()
 pygame.init()
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption("Flappy Bird Game")
-font = pygame.font.Font(None, 50)
+pygame.display.set_caption(GAME_TITLE)
+font = pygame.font.Font(None, FONT_SIZE)
 
 bird = Bird()
 
@@ -23,11 +24,11 @@ score_button_idx    = 0
 play_button_idx     = 0
 exit_button_idx     = 0
 
-normal_pipes = PipeList()
-inverted_pipes = PipeList()
+normal_pipes    = PipeList()
+inverted_pipes  = PipeList()
 
 pipe_time = 0
-pipe_interval = 1500
+
 
 def game_over():
         screen.blit(BG_IMAGE, (0, 0))
@@ -61,9 +62,9 @@ def draw_menu():
     screen.blit(TITLE_IMAGE, (WINDOW_WIDTH // 2 - TITLE_IMAGE.get_width() // 2, 50))
 
 
-    play_sprite_sheet = pygame.image.load(resource_path('./assets/play_sprite.png')).convert_alpha()
-    score_sprite_sheet = pygame.image.load(resource_path('./assets/high_score_sprite.png')).convert_alpha()
-    exit_sprite_sheet = pygame.image.load(resource_path('./assets/exit_sprite.png')).convert_alpha()
+    play_sprite_sheet   = PLAY_SPRITE_IMAGE.convert_alpha();
+    score_sprite_sheet  = SCORE_SPRITE_IMAGE.convert_alpha();
+    exit_sprite_sheet   = EXIT_SPRITE_IMAGE.convert_alpha();
 
 
     play_button_state = []
@@ -108,6 +109,7 @@ def draw_menu():
     screen.blit(play_button_state[play_button_idx], play_button_pos)
     screen.blit(score_button_state[score_button_idx], score_button_pos)
     screen.blit(exit_button_state[exit_button_idx], exit_button_pos)
+
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
@@ -150,7 +152,7 @@ def draw_menu():
 
 
 def play_game():
-    global pipe_time, pipe_interval, user_score
+    global pipe_time, PIPE_INTERVAL, user_score
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -162,7 +164,7 @@ def play_game():
 
     current_time = pygame.time.get_ticks()
 
-    if current_time - pipe_time > pipe_interval:
+    if current_time - pipe_time > PIPE_INTERVAL:
         pipe_time = current_time
 
         # Add new pipes

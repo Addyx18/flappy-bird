@@ -1,5 +1,5 @@
-from constants import WINDOW_HEIGHT, WINDOW_WIDTH, GROUND_IMAGE
-
+from constants import WINDOW_HEIGHT, WINDOW_WIDTH
+from game_assets import BIRD_IMAGE, BIRD_FLAP_SOUND, BIRD_HIT_SOUND, GROUND_IMAGE
 import config
 from config import GameState, resource_path
 import pygame
@@ -10,16 +10,16 @@ MAX_FALL_SPEED = 10
 
 class Bird:
     def __init__(self, x=WINDOW_WIDTH/2, y=WINDOW_HEIGHT/2):
-        self.x = x
-        self.y = y
-        self.image = pygame.image.load(resource_path('./assets/bird.png')).convert_alpha()
-        self.width = self.image.get_rect().width
-        self.height = self.image.get_rect().height
-        scale_factor = 1.0
-        self.bird = pygame.transform.scale(self.image, (int(self.width * scale_factor), int(self.height * scale_factor)))
-        self.velocity = 0
-        self.flap_sound = pygame.mixer.Sound(resource_path('./assets/audio/wing.wav'))
-        self.hit_sound = pygame.mixer.Sound(resource_path('./assets/audio/hit.wav'))
+        self.x          = x
+        self.y          = y
+        self.image      = BIRD_IMAGE
+        self.width      = self.image.get_rect().width
+        self.height     = self.image.get_rect().height
+        scale_factor    = 1.0
+        self.bird       = pygame.transform.scale(self.image, (int(self.width * scale_factor), int(self.height * scale_factor)))
+        self.velocity   = 0
+        self.flap_sound =   BIRD_FLAP_SOUND
+        self.hit_sound  =    BIRD_HIT_SOUND
 
     def reset(self, x=WINDOW_WIDTH/2, y=WINDOW_HEIGHT/2):
         self.x = x

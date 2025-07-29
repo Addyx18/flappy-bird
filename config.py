@@ -15,7 +15,6 @@ loaded = False
 
 
 def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and PyInstaller """
     try:
         base_path = sys._MEIPASS
     except AttributeError:

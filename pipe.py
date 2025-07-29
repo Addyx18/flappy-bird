@@ -1,6 +1,7 @@
 import pygame
 import random
-from constants import BAR_IMAGE, WINDOW_WIDTH, WINDOW_HEIGHT
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from game_assets import BAR_IMAGE
 
 class Pipe():
     def __init__(self, upside_down=True):
