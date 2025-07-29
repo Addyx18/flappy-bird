@@ -2,7 +2,6 @@
 1. Clone the Repository
 ```bash
     git clone https://github.com/Addyx18/flappy-bird.git
-    pip3 install pygame
 ```
 2. Install dependencies:
 ```bash
